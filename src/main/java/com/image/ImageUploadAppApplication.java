@@ -5,8 +5,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootApplication
 public class ImageUploadAppApplication {
@@ -21,12 +27,14 @@ public class ImageUploadAppApplication {
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
-
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 
+
 				String[] allowedOrigins = environment.getProperty("cors.allowed.origin").split(",");
 
+				registry.addMapping("/**")
+						.allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS");
 				registry.addMapping("/api/file/saveFile").allowedOrigins(allowedOrigins).allowedMethods("POST", "OPTIONS")
 						.allowedHeaders("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin");
 
