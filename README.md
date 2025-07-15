@@ -4,6 +4,7 @@ To be used together with a Angular frontend app
 [Introduction](#introduction)
 
 [Getting started](#getting-started)
+[Improvement](#improvement)
 
 # introduction
 
@@ -13,5 +14,9 @@ This app is used together with an Angular frontend found here
 # Getting started
 
 Run on your preferred IDE
+
+# Improvement
+
+Improved the service to persist images to GCP permanently.
 
 

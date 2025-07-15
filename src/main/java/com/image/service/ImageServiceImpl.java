@@ -81,25 +81,18 @@ public class ImageServiceImpl implements ImageService {
 							Image existingEntity = existingEntityOptional.orElse(null);
 
 							BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, fileNameWithoutExtension).build();
+							uploadToGCS(file, blobInfo, storage);
 
-							try (WriteChannel writer = storage.writer(blobInfo);
-								 InputStream inputStream = file.getInputStream()) {
-
-								byte[] buffer = new byte[8192];
-								int limit;
-								while ((limit = inputStream.read(buffer)) >= 0) {
-									writer.write(ByteBuffer.wrap(buffer, 0, limit));
-								}
-							}
-							URL url = storage.signUrl(blobInfo, 7, TimeUnit.DAYS,
-									Storage.SignUrlOption.withV4Signature());
+							String url = String.format("https://storage.googleapis.com/%s/%s",
+									blobInfo.getBucket(),
+									blobInfo.getName());
 
 							if (existingEntity != null) {
-								existingEntity.setUrl(url.toString());
+								existingEntity.setUrl(url);
 							} else {
 								Image image = new Image();
 								image.setName(fileNameWithoutExtension);
-								image.setUrl(url.toString());
+								image.setUrl(url);
 								entityManager.persist(image);
 							}
 							log.info("File {} saved successfully!", fileNameWithoutExtension);
@@ -117,6 +110,17 @@ public class ImageServiceImpl implements ImageService {
 			}
 		}
 		return new MessageResponse("Files saved to cloud successfully.");
+	}
+
+	private void uploadToGCS(MultipartFile file, BlobInfo blobInfo, Storage storage) throws IOException {
+		try (WriteChannel writer = storage.writer(blobInfo);
+			 InputStream inputStream = file.getInputStream()) {
+			byte[] buffer = new byte[8192];
+			int limit;
+			while ((limit = inputStream.read(buffer)) >= 0) {
+				writer.write(ByteBuffer.wrap(buffer, 0, limit));
+			}
+		}
 	}
 
 	public Optional<Image> findImageByName(String fileNameWithoutExtension) {

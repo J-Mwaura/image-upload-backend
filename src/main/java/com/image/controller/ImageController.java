@@ -8,6 +8,7 @@ import com.image.dto.UpdateImageDTO;
 import com.image.exceptions.InvalidFileExtensionException;
 import com.image.response.ApiResponse;
 import com.image.response.MessageResponse;
+import com.image.service.ImageService;
 import jakarta.validation.Valid;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.image.entity.Image;
 import com.image.service.ImageServiceImpl;
 
 /**
@@ -32,9 +32,12 @@ import com.image.service.ImageServiceImpl;
 @RequestMapping("api/file/")
 public class ImageController {
 	
+
+	ImageService imageService;
+
 	@Autowired
-	ImageServiceImpl imageService;
-	
+	public ImageController(ImageServiceImpl imageService) {this.imageService = imageService;}
+
 	@PostMapping("saveFile")
 	public ResponseEntity<MessageResponse> saveImage(@RequestParam("files") List<MultipartFile> files) {
 		try {

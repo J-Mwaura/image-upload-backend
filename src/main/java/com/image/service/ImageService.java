@@ -19,7 +19,6 @@ import com.image.dto.ImageDTO;
 public interface ImageService {
 
 	MessageResponse saveImage(List<MultipartFile> files) throws Exception;
-	
 	Page<ImageDTO> getImages(Pageable pageable);
 	ImageDTO updateImage(Long id, UpdateImageDTO dto);
 	void deleteImage(Long id);
